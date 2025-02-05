@@ -2,246 +2,297 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="Flask/static/style1.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="icon" href="{{url_for('static', filename='img/logo.png')}}">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <title>{% block title %}{% endblock %}</title>
-    <style>
-        body {
-    margin: 0px;
-    padding: 0px;
-    background-color: rgb(69, 54, 54);
-}
-* {
-    box-sizing: border-box;
-}
-ul {
-    list-style: none;
-}
-a {
-    text-decoration: none;
-}
-nav {
-    min-height: 60px;
-    width: 100%;
-    background-color: red;
-    border-top: 1px solid black !important;
-    position: absolute;
-    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.4);
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    flex-flow: row wrap;
-}
-.logo h2 {
-    font-size: 30px;
-    font-weight: bold;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    color: white !important;
-    letter-spacing: 1px;
-} 
+    <title>International News</title>
+    <link rel="icon" href="{{ url_for('static', filename='img/logo.png') }}">
 
-nav .menu {
-    display: flex;
-    flex-flow: row wrap;
-    justify-content: center;
-    align-items: center;
-}
-nav .menu li a {
-    height: 35px;
-    line-height: 30px;
-    display:flex ;
-    text-transform: uppercase;
-    align-items: center;
-    padding: 0px 22px;
-    font-size: 15px;
-    font-weight: bold;
-    color: white;
-    font-family: 'Poppins', sans-serif;
-    letter-spacing: 1px;
-}
-nav .menu li a:hover { 
-    color: black;
-    background-color:white;
-    border-radius: 20px;
-}
-#main {
-    padding-top: 98px;
-}
-.banner {
-    height: 620px;
-    width: 100%;
-    display: flex;
-    flex-wrap: column;
-    justify-content: center;
-    align-items: center;
-    background-color: black;
-    border: 1px solid rgb(98, 4, 4);
-}
-.banner img {
-    height: 100%;
-    width: 100%;
-    padding: 2px;
-}
-.head-git{
-    height: 40px;
-    width: 100%;
-    justify-content: center;
-    align-items: center;
-    background-color: rgb(250, 244, 244);
-    display: flex;
-    flex-flow: row;
-    margin-bottom: 5px;
-  }
-  .head-git h2 {
-    font-size: 18px;
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    color:black;
-  }
-  .head-git h2 a { 
-    text-decoration: none;
-    color:blue;
-    font-size: 23px;
-  }
-  .head-git h2 a:hover { 
-    color:rgb(211, 47, 41);
-    background-color: beige;
-  }
-  .nav-link {
-    height: 100%;
-    width: 100%;
-    color: black;
-  }
-.head {
-    height: 50px;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 30px;
-    font-weight: bold;
-    font-family:'Times New Roman', Times, serif;
-    padding-left: 20px;
-    padding-top: 10px;
-}
-.wrapper {
-    height: 400px;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    padding: 10px;
-    justify-content: space-between;
-    background-color: rgb(68, 47, 47);
-}
-.wrapper .item {
-    height: 300px;
-    min-width: 30%;
-    border-radius: 20px;
-    margin: 10px;
-    box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.4);
-    padding: 0.5px;
-    flex-flow: column wrap;
-    border-bottom: 1px white;
-}
-.wrapper .item img {
-    height: 100%;
-    width: 100%;
-}
-.c-box {
-    height: content;
-    max-width: 50%;
-    display: flex;
-    align-items: center;
-    padding: 10px;
-    flex-flow: column;
-    padding: 1px;
-} 
-.c-box .content {
-    height: content;
-    min-width: 30%;
-    display: flex;
-    align-items: center;
-    flex-flow: row wrap;
-}
-.c-box .content p {
-    color: #fff;
-    font-size: 15px;
-    font-weight: bold;
-    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-}
-.c-box .content h2 {
-    color: yellow;
-    font-size: 20px;
-    font-weight: bold;
-    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-}
-.head-f{
-    height: 40px;
-    width: 100%;
-    justify-content: center;
-    align-items: center;
-    border-top: 2px solid black;
-    background-color: yellow;
-    display: flex;
-    flex-flow: column;
-  }
-  .head-f h2 {
-    font-size: 15px;
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    color:black;
-  }
+    <script>
+        function toggleDarkMode() {
+            document.body.classList.toggle("dark-mode");
+        }
+
+        function loadLatestNews() {
+            fetch('/fetch_news')
+                .then(response => response.json())
+                .then(data => {
+                    let newsWrapper = document.querySelector('.news-wrapper');
+                    newsWrapper.innerHTML = '';
+
+                    data.forEach(article => {
+                        let newsItem = document.createElement('div');
+                        newsItem.classList.add('news-item');
+                        newsItem.innerHTML = `
+                            <a href="${article.url}"><img src="${article.image}" alt="News Image"></a>
+                            <h3><a href="${article.url}" class="news-title">${article.title}</a></h3>
+                            <p class="news-description">${article.description}</p>
+                            <p class="news-date">📅 Publish Date: ${article.published_at}</p>
+                        `;
+                        newsWrapper.appendChild(newsItem);
+                    });
+                });
+        }
+
+        setInterval(loadLatestNews, 60000);
+        window.onload = loadLatestNews;
+    </script>
+
+    <style>
+        /* Global styles */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: rgb(69, 54, 54);
+            color: white;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        /* Dark Mode */
+        .dark-mode {
+            background-color: #121212;
+            color: white;
+        }
+
+        /* Navigation Bar */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, #ff5f6d, #ffc3a0);
+            padding: 20px 30px;
+            flex-wrap: wrap;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease;
+        }
+
+        nav h2 {
+            font-size: 30px;
+            font-weight: 700;
+            color: white;
+            letter-spacing: 2px;
+            margin: 0;
+        }
+
+        .menu {
+            display: flex;
+            gap: 30px;
+        }
+
+        .menu a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            font-size: 18px;
+            font-weight: 500;
+            text-transform: uppercase;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .menu a:hover {
+            background-color: white;
+            color: #ff5f6d;
+            transform: scale(1.1);
+        }
+
+        .toggle-dark-mode {
+            background-color: white;
+            color: #ff5f6d;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .toggle-dark-mode:hover {
+            background-color: #ff5f6d;
+            color: white;
+        }
+
+        /* News Items */
+        .news-wrapper {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeIn 1s ease-out;
+        }
+
+        .news-item {
+            background-color: #333;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .news-item:hover {
+            transform: translateY(-5px);
+            background-color: #444;
+            box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .news-item img {
+            width: 100%;
+            border-radius: 10px;
+            max-height: 250px;
+            object-fit: cover;
+            transition: opacity 0.3s ease;
+        }
+
+        .news-item img:hover {
+            opacity: 0.9;
+        }
+
+        .news-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: rgb(255, 223, 0);
+            margin: 10px 0;
+            transition: color 0.3s ease;
+        }
+
+        .news-title:hover {
+            color: rgb(255, 100, 0);
+        }
+
+        .news-description {
+            font-size: 14px;
+            color: rgb(200, 200, 200);
+            margin: 10px 0;
+            transition: color 0.3s ease;
+        }
+
+        .news-description:hover {
+            color: rgb(255, 255, 255);
+        }
+
+        .news-date {
+            font-size: 12px;
+            color: rgb(77, 255, 0);
+            margin-top: 10px;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            background: linear-gradient(to right, #ff0000, #990000);
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .news-wrapper {
+                grid-template-columns: repeat(2, 1fr);
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .news-wrapper {
+                grid-template-columns: repeat(1, 1fr);
+                padding: 10px;
+            }
+
+            .menu {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .menu a {
+                display: block;
+                padding: 12px;
+                font-size: 16px;
+            }
+
+            .toggle-dark-mode {
+                padding: 10px;
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h2 {
+                font-size: 24px;
+            }
+
+            .news-item {
+                max-width: 100%;
+                padding: 10px;
+            }
+
+            .news-item img {
+                max-height: 180px;
+            }
+
+            .news-title {
+                font-size: 18px;
+            }
+
+            .news-description {
+                font-size: 14px;
+            }
+
+            .news-date {
+                font-size: 12px;
+            }
+
+            footer {
+                font-size: 14px;
+                padding: 15px;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
     </style>
 </head>
 <body>
     <nav>
-        <a href="" class="logo"><h2>Internationl NEWS </h2></a>
-        <ul class= "menu">
-            <li class="nav-items"><a href='/'>Home</a></li>
-            <li class="nav-items"><a href='/'>News</a></li>
-            <li class="nav-items"><a href='/'>Blogs</a></li>
-            <li class="nav-items"><a href='/'>Contact</a></li>
+        <h2>International News</h2>
+        <ul class="menu">
+            <li><a href="#">Home</a></li>
+            <li><a href="#">News</a></li>
+            <li><a href="#">Blogs</a></li>
         </ul>
+        <button class="toggle-dark-mode" onclick="toggleDarkMode()">Dark Mode</button>
     </nav>
-    <section id="main">
-        <div class="banner">
-            <img src="https://t4.ftcdn.net/jpg/03/37/92/49/360_F_337924964_fF6I0iZkv9lvoIEn71f0OsgawArIPPDu.jpg">
-        </div>
-        <div class="head">TODAY'S TOP HEADLINES</div>
-        {% for title,desc,img,p_date,url in contents %}
-            <div class="wrapper">
-                <div class="item"><a href="{{url}}"><img src="{{img}}"></a></div>
-                <div class="c-box">
-                    <div class="content"><a href="{{url}}"><h2>{{title}}</h2></a></div>
-                    <div class="content"><a href="{{url}}"><p>{{desc}}</p></a></div>
-                    <div class="content">
-                        <p style="color:rgb(77, 255, 0);">Publish Date:- </p>
-                        <p>{{p_date}}</p>
-                    </div>
-                </div>
-            </div>
-        {% endfor %}  
 
-        <div class="head">TODAY'S NEWS</div>
-        {% for title,desc,img,p_date,url in all %}
-            <div class="wrapper">
-                <div class="item"><a href="{{url}}"><img src="{{img}}"></a></div>
-                <div class="c-box">
-                    <div class="content"><a href="{{url}}"><h2>{{title}}</h2></a></div>
-                    <div class="content"><p>{{desc}}</p></div>
-                    <div class="content">
-                        <p style="color:rgb(77, 255, 0);">Publish Date:- </p>
-                        <p>{{p_date}}</p>
-                    </div>
-                </div>
-            </div>
+    <div class="news-wrapper">
+        {% for article in articles %}
+        <div class="news-item">
+            <a href="{{ article.url }}"><img src="{{ article.image }}" alt="News Image"></a>
+            <h3><a href="{{ article.url }}" class="news-title">{{ article.title }}</a></h3>
+            <p class="news-description">{{ article.description }}</p>
+            <p class="news-date">📅 Publish Date: {{ article.published_at }}</p>
+        </div>
         {% endfor %}
-    </section>
+    </div>
+
     <footer>
-        <div class="head-f"><h2> Copyright &copy; 2024 from Syed Danish</h2></div>
+        Copyright &copy; 2024 Syed Danish | Made with ❤️
     </footer>
 </body>
 </html>
