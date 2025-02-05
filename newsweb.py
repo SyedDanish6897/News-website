@@ -1,55 +1,55 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, jsonify
 from newsapi import NewsApiClient
 
 app = Flask(__name__)
 
+# API Key
+API_KEY = '25560f3cf53c433c9807c60595b373a6'
+newsapi = NewsApiClient(api_key=API_KEY)
+
 @app.route("/")
 def home():
-    api_key = '25560f3cf53c433c9807c60595b373a6'
+    # Fetch 10 top headlines + 10 more from everything (to ensure at least 15 articles)
+    top_headlines = newsapi.get_top_headlines(sources="bbc-news", page_size=10)
+    all_articles = newsapi.get_everything(sources="bbc-news", page_size=10)
 
-    newsapi = NewsApiClient(api_key=api_key)
+    articles = top_headlines['articles'] + all_articles['articles']
 
-    top_headlines = newsapi.get_top_headlines(sources="bbc-news")
-    all_articles = newsapi.get_everything(sources="bbc-news")
+    # Remove duplicates by checking unique URLs
+    unique_articles = {article['url']: article for article in articles}.values()
 
-    t_articles = top_headlines['articles']
-    a_articles = all_articles['articles']
+    # Limit to 15 articles
+    contents = [{
+        'title': article['title'],
+        'description': article['description'] if article['description'] else "No description available.",
+        'image': article['urlToImage'] if article['urlToImage'] else "/static/img/default-news.jpg",
+        'published_at': article['publishedAt'],
+        'url': article['url']
+    } for article in unique_articles][:15]  # Ensure only 15 articles
 
-    news = []
-    desc = []
-    img = []
-    p_date = []
-    url = []
+    return render_template('newsweb.html', contents=contents)
 
-    for i in range(len(t_articles)):
-        main_article = t_articles[i]
+@app.route("/fetch_news")
+def fetch_news():
+    # Fetch latest news dynamically
+    top_headlines = newsapi.get_top_headlines(sources="bbc-news", page_size=10)
+    all_articles = newsapi.get_everything(sources="bbc-news", page_size=10)
 
-        news.append(main_article['title'])
-        desc.append(main_article['description'])
-        img.append(main_article['urlToImage'])
-        p_date.append(main_article['publishedAt'])
-        url.append(main_article['url'])
+    articles = top_headlines['articles'] + all_articles['articles']
 
-    contents = zip(news, desc, img, p_date, url)
+    # Remove duplicates and ensure 15 articles
+    unique_articles = {article['url']: article for article in articles}.values()
+    
+    news_data = [{
+        'title': article['title'],
+        'description': (article['description'][:150] + "... <a href='" + article['url'] + "' style='color:yellow;'>Read More</a>") 
+                        if article['description'] and len(article['description']) > 150 else article['description'] or "No description available.",
+        'image': article['urlToImage'] if article['urlToImage'] else "/static/img/default-news.jpg",
+        'published_at': article['publishedAt'],
+        'url': article['url']
+    } for article in unique_articles][:15]  # Ensure only 15 articles
 
-    news_all = []
-    desc_all = []
-    img_all = []
-    p_date_all = []
-    url_all = []
-
-    for j in range(len(a_articles)):
-        main_all_articles = a_articles[j]
-
-        news_all.append(main_all_articles['title'])
-        desc_all.append(main_all_articles['description'])
-        img_all.append(main_all_articles['urlToImage'])
-        p_date_all.append(main_all_articles['publishedAt'])
-        url_all.append(main_all_articles['url'])
-
-    all_articles_zip = zip(news_all, desc_all, img_all, p_date_all, url_all)
-
-    return render_template('newsweb.html', contents=contents, all_articles=all_articles_zip)
+    return jsonify(news_data)
 
 if __name__ == '__main__':
     app.run(debug=True)
